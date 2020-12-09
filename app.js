@@ -8,6 +8,7 @@ const filterOption = document.querySelector(".filter-todos");
 todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
+document.addEventListener("DOMContentLoaded", getTodos);
 
 //FUNCTIONS
 function addTodo(e) {
@@ -20,6 +21,8 @@ function addTodo(e) {
     newTodo.classList.add("todo-item");
     newTodo.innerText = todoInput.value;
     todoDiv.appendChild(newTodo);
+    // ADD TO LOCAL STORAGE
+    appendToStorage(todoInput.value);
     todoInput.value = "";
     // Create CheckMark Button
     const completeBtn = document.createElement("button");
@@ -78,3 +81,47 @@ function filterTodo(e) {
         }
     });
 }
+
+function appendToStorage(data) {
+    let oldStorage;
+    if (localStorage.getItem("todos") === null) {
+        oldStorage = [];
+    } else {
+        oldStorage = JSON.parse(localStorage.getItem("todos"));
+    }
+    oldStorage.push(data);
+    localStorage.setItem("todos", JSON.stringify(oldStorage));
+}
+function getTodos() {
+    let oldStorage;
+    if (!localStorage.getItem("todos")) {
+        oldStorage = [];
+    } else {
+        oldStorage = JSON.parse(localStorage.getItem("todos"));
+    }
+    oldStorage.forEach((todo) => {
+        // Create todo div
+        const todoDiv = document.createElement("div");
+        todoDiv.classList.add("todo");
+        // Create todo item
+        const newTodo = document.createElement("li");
+        newTodo.classList.add("todo-item");
+        newTodo.innerText = todo;
+        todoDiv.appendChild(newTodo);
+        // Create CheckMark Button
+        const completeBtn = document.createElement("button");
+        completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+        completeBtn.classList.add("completed-btn");
+        todoDiv.appendChild(completeBtn);
+        // Create delete button
+        const trashBtn = document.createElement("button");
+        trashBtn.classList.add("trash-btn");
+        trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        todoDiv.appendChild(trashBtn);
+        // APPEND TO LIST
+        todoList.prepend(todoDiv);
+    });
+}
+
+// todo remove object from local storage
+function removeLocalTodo() {}
